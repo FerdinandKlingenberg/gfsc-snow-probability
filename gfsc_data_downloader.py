@@ -58,7 +58,7 @@ except ImportError:
 # ============================================================================
 
 # WEkEO Credentials (for data before 2025-01-20)
-# Opprett bruker på: https://identity.dataspace.copernicus.eu/
+# Opprett bruker på: https://wekeo.copernicus.eu/register/
 WEKEO_USER = "ditt_brukernavn"
 WEKEO_PASSWORD = "ditt_passord"
 
