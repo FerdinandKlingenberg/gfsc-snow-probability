@@ -100,8 +100,8 @@ TRANSITION_DATE = datetime(2025, 1, 20)
 # MGRS tiles file for S3 spatial filtering
 MGRS_FILE = "MGRS_tiles.gpkg"
 
-# WEkEO rate limiting (100 downloads per hour)
-WEKEO_RATE_LIMIT = 100  # Max downloads per hour
+# WEkEO rate limiting (500 downloads per hour)
+WEKEO_RATE_LIMIT = 500  # Max downloads per hour
 WEKEO_COOLDOWN_MINUTES = 61  # Minutes to wait when rate limit hit (60 + 1 buffer)
 
 # Output directory names (used for filtering and display)
