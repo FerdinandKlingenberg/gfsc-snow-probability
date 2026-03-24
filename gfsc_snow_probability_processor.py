@@ -8,8 +8,8 @@ using temporal aggregation approach - calculating snow probability for each tile
 using ALL available years combined (like OpenEO approach).
 
 Directory structure expected:
-- gfsc_data/GFSC-2017-2024/  (contains directories like GFSC_20170401-007_S1-S2_T32VMM_V101_1639994394/)
-- gfsc_data/GFSC-2025/       (contains directories like CLMS_WSI_GFSC_060m_T32VML_20250401P7D_COMB_V102/)
+- gfsc_data/GFSC-wekeo/  (contains directories like GFSC_20170401-007_S1-S2_T32VMM_V101_1639994394/)
+- gfsc_data/GFSC-s3/     (contains directories like CLMS_WSI_GFSC_060m_T32VML_20180401P7D_COMB_V102/)
 
 Output structure (like OpenEO):
 - 1_raw_yearly_data/        Individual yearly rasters
@@ -41,8 +41,8 @@ warnings.filterwarnings('ignore')
 # ============================================================================
 
 # Data paths (adjust these to match your directory structure)
-OLD_DATA_PATH = "gfsc_data/GFSC-2017-2024"     # Path to 2017-2024 data
-NEW_DATA_PATH = "gfsc_data/GFSC-2025"          # Path to 2025 data
+OLD_DATA_PATH = "gfsc_data/GFSC-wekeo"     # Path to WEkEO data (old format)
+NEW_DATA_PATH = "gfsc_data/GFSC-s3"       # Path to S3 data (new format, reprocessed + 2025+)
 
 # Processing parameters
 YEARS_TO_PROCESS = [2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025]  # All years
@@ -61,11 +61,11 @@ QUICK_TEST = False
 
 class UnifiedGFSCProcessor:
     """
-    Unified processor for both GFSC-2017-2024 and GFSC-2025 formats
+    Unified processor for WEkEO (old format) and S3 (new format) data
     with temporal aggregation approach (like OpenEO)
     """
-    
-    def __init__(self, old_data_path: str = "GFSC-2017-2024", new_data_path: str = "GFSC-2025"):
+
+    def __init__(self, old_data_path: str = "GFSC-wekeo", new_data_path: str = "GFSC-s3"):
         self.old_data_path = Path(old_data_path)
         self.new_data_path = Path(new_data_path)
         
@@ -793,8 +793,8 @@ def print_usage_instructions():
 
 1. DATA PREPARATION:
    - Ensure your data is organized in the expected directory structure:
-     * gfsc_data/GFSC-2017-2024/ containing old format directories
-     * gfsc_data/GFSC-2025/ containing new format directories
+     * gfsc_data/GFSC-wekeo/ containing old format directories (WEkEO downloads)
+     * gfsc_data/GFSC-s3/ containing new format directories (S3 downloads, reprocessed + 2025+)
 
 2. CONFIGURATION:
    - Edit the configuration section at the top of this script

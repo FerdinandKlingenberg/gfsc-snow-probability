@@ -11,8 +11,8 @@ The script automatically detects which source to use based on the date range
 and organizes downloads to match gfsc_snow_probability_processor.py expectations.
 
 Output Directory Structure:
-- GFSC-2017-2024/  Contains product directories for years 2017-2024
-- GFSC-2025/       Contains product directories for year 2025+
+- GFSC-wekeo/  Contains product directories downloaded from WEkEO (old format)
+- GFSC-s3/     Contains product directories downloaded from S3 (new format)
 
 Usage:
 1. Configure your credentials and parameters in the configuration section
@@ -120,25 +120,20 @@ WEKEO_RATE_LIMIT = 500  # Max downloads per hour
 WEKEO_STATE_FILE = ".wekeo_downloaded_ids.txt"
 
 # Output directory names (used for filtering and display)
-OUTPUT_DIR_NAMES = ['GFSC-2017-2024', 'GFSC-2025']
+OUTPUT_DIR_NAMES = ['GFSC-wekeo', 'GFSC-s3']
 
 # ============================================================================
 # UTILITY FUNCTIONS
 # ============================================================================
 
-def get_output_directory(year: int) -> Path:
+def get_output_directory(source: str) -> Path:
     """
-    Get output directory based on year to match standalone_gfsc_processor.py structure
-    - Years 2017-2024: GFSC-2017-2024/
-    - Year 2025+: GFSC-2025/
+    Get output directory based on download source.
+    - 'wekeo': GFSC-wekeo/  (old format, WEkEO HDA API)
+    - 's3':    GFSC-s3/     (new format, S3 Copernicus HRWSI)
     """
     base_path = Path(OUTPUT_BASE_DIR)
-
-    if year >= 2025:
-        output_dir = base_path / "GFSC-2025"
-    else:
-        output_dir = base_path / "GFSC-2017-2024"
-
+    output_dir = base_path / f"GFSC-{source}"
     output_dir.mkdir(parents=True, exist_ok=True)
     return output_dir
 
@@ -361,7 +356,7 @@ class WEkEODownloader:
 
             base_path = Path(OUTPUT_BASE_DIR)
             base_path.mkdir(exist_ok=True)
-            year_output_dir = get_output_directory(year)
+            year_output_dir = get_output_directory('wekeo')
 
             # Build skip-set: already extracted on disk + previously recorded in state file
             existing_on_disk = set(d.name for d in year_output_dir.iterdir() if d.is_dir())
@@ -518,7 +513,7 @@ class S3Downloader:
                 print(f"    [S3] Tile {tile}: Found {len(products)} products")
 
                 if len(products) > 0 and not dry_run:
-                    year_output_dir = get_output_directory(year)
+                    year_output_dir = get_output_directory('s3')
 
                     for product_dir, files in tqdm(products.items(), desc=f"    [S3] {tile}"):
                         product_name = os.path.basename(product_dir)
@@ -698,8 +693,8 @@ class UnifiedGFSCDownloader:
 
         print()
         print(f"Output directory: {Path(OUTPUT_BASE_DIR).absolute()}")
-        print(f"  - GFSC-2017-2024/: Years 2017-2024 (old format)")
-        print(f"  - GFSC-2025/: Year 2025+ (new format)")
+        print(f"  - GFSC-wekeo/: WEkEO downloads (old format)")
+        print(f"  - GFSC-s3/:    S3 downloads (new format, reprocessed + 2025+)")
 
         if dry_run:
             print("\n⚠ DRY RUN MODE - No files were actually downloaded")
