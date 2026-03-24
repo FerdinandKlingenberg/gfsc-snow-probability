@@ -105,6 +105,11 @@ DRY_RUN = False    # Set to True to test without downloading
 # Transition date between WEkEO and S3
 TRANSITION_DATE = datetime(2025, 1, 20)
 
+# Years being reprocessed by Copernicus Land Service and available on S3.
+# These are routed to S3 regardless of TRANSITION_DATE.
+# Add years here as reprocessing completes (e.g. [2017, 2018, 2019, ...]).
+S3_REPROCESSED_YEARS = [2017, 2018]
+
 # MGRS tiles file for S3 spatial filtering
 MGRS_FILE = "MGRS_tiles.gpkg"
 
@@ -524,6 +529,9 @@ class S3Downloader:
                             file_name = os.path.basename(obj.key)
                             local_file = local_product_dir / file_name
 
+                            if local_file.exists():
+                                continue
+
                             try:
                                 self.client.Bucket(self.bucket).download_file(obj.key, str(local_file))
                             except Exception as e:
@@ -583,8 +591,11 @@ class UnifiedGFSCDownloader:
             else:
                 end_date = datetime(year, month + 1, 1) - timedelta(days=1)
 
-        # Split by source
-        wekeo_range, s3_range = split_date_range_by_source(start_date, end_date)
+        # Split by source — reprocessed years go directly to S3
+        if year in S3_REPROCESSED_YEARS:
+            wekeo_range, s3_range = None, (start_date, end_date)
+        else:
+            wekeo_range, s3_range = split_date_range_by_source(start_date, end_date)
 
         result = {
             'year': year,

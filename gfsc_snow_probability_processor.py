@@ -112,33 +112,33 @@ class UnifiedGFSCProcessor:
         
         return sorted(found_files, key=lambda x: x['date'])
     
-    def scan_new_format_files(self, year: int, month: int, tile_id: str) -> List[Dict]:
+    def scan_new_format_files(self, year: int, month: int, tile_id: str,
+                               search_path: Path = None) -> List[Dict]:
         """
-        Scan for new format files (2025+)
-        Pattern: CLMS_WSI_GFSC_060m_TILEXX_YYYYMMDDP7D_COMB_V102
+        Scan for new format files (CLMS_WSI_GFSC_060m_TILEXX_YYYYMMDDP7D_COMB_V102).
+        Defaults to new_data_path but accepts an override for reprocessed data
+        stored in old_data_path.
         """
         found_files = []
-        
-        if not self.new_data_path.exists():
-            print(f"    New data path does not exist: {self.new_data_path}")
+        path = search_path if search_path is not None else self.new_data_path
+
+        if not path.exists():
+            print(f"    Data path does not exist: {path}")
             return found_files
-            
-        # Pattern for new format directory names
+
         pattern = f"CLMS_WSI_GFSC_060m_{tile_id}_{year:04d}{month:02d}\\d{{2}}P7D_COMB_V102"
-        
-        for item in self.new_data_path.iterdir():
+
+        for item in path.iterdir():
             if item.is_dir() and re.match(pattern, item.name):
-                # Extract date from directory name
                 date_match = re.search(f'CLMS_WSI_GFSC_060m_{tile_id}_({year:04d}{month:02d}\\d{{2}})P7D_COMB_V102', item.name)
                 if date_match:
                     date_str = date_match.group(1)
                     try:
                         date = datetime.strptime(date_str, '%Y%m%d')
-                        
-                        # Look for GF and GF-QA files
+
                         gf_file = item / f"{item.name}_GF.tif"
                         qa_file = item / f"{item.name}_GF-QA.tif"
-                        
+
                         if gf_file.exists() and qa_file.exists():
                             found_files.append({
                                 'file_path': gf_file,
@@ -152,15 +152,18 @@ class UnifiedGFSCProcessor:
                             })
                     except ValueError:
                         continue
-        
+
         return sorted(found_files, key=lambda x: x['date'])
-    
+
     def scan_all_files(self, year: int, month: int, tile_id: str) -> List[Dict]:
-        """Scan for files in both old and new formats"""
+        """Scan for files in both old and new formats across all data paths"""
         old_files = self.scan_old_format_files(year, month, tile_id)
+        # New format from GFSC-2025 (live data) and GFSC-2017-2024 (reprocessed data)
         new_files = self.scan_new_format_files(year, month, tile_id)
-        
-        all_files = old_files + new_files
+        new_files_reprocessed = self.scan_new_format_files(year, month, tile_id,
+                                                            search_path=self.old_data_path)
+
+        all_files = old_files + new_files + new_files_reprocessed
         return sorted(all_files, key=lambda x: x['date'])
     
     def load_gfsc_data(self, file_info: Dict) -> np.ndarray:
