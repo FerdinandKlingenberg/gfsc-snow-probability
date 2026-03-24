@@ -18,7 +18,7 @@ Verktøy for nedlasting og prosessering av Gap-filled Fractional Snow Cover (GFS
 ### 1. Installer avhengigheter
 
 ```bash
-pip install rasterio numpy pandas matplotlib seaborn hda boto3 retry tqdm geopandas shapely pyproj pyogrio
+pip install rasterio numpy pandas matplotlib seaborn hda boto3 retry tqdm geopandas shapely pyproj pyogrio python-dotenv
 ```
 
 ### 2. Last ned data
