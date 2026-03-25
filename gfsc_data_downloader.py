@@ -78,15 +78,15 @@ S3_BUCKET = "HRWSI"
 
 # Processing parameters
 YEARS_TO_PROCESS = [2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025]
-MONTHS_TO_PROCESS = [5]  # April = [4], April-June = [4, 5, 6]
-TILES_TO_PROCESS = ['T32VML', 'T32VMM', 'T32VNL', 'T32VNM']
+MONTHS_TO_PROCESS = [4, 5, 6]  # April = [4], April-June = [4, 5, 6]
+TILES_TO_PROCESS = ["32VKK", "32VKL", "32VKM", "32VKN", "32VKP", "32VKQ", "32VLJ", "32VLK", "32VLL", "32VLM", "32VLN", "32VLP", "32VLQ", "32VLR", "32VMJ", "32VMK", "32VML", "32VMM", "32VMN", "32VMP", "32VMQ", "32VMR", "32VNK", "32VNL", "32VNM", "32VNN", "32VNP", "32VNQ", "32VNR", "32VPL", "32VPM", "32VPN", "32VPP", "32VPQ", "32VPR", "32WMS", "32WNA", "32WNS", "32WNT", "32WNU", "32WNV", "32WPA", "32WPB", "32WPS", "32WPT", "32WPU", "32WPV", "33WVM", "33WVN", "33WVP", "33WVQ", "33WVR", "33WVS", "33WVT", "33WWP", "33WWQ", "33WWR", "33WWS", "33WWT", "33WWU", "33WXR", "33WXS", "33WXT", "33WXU", "34WDA", "34WDB", "34WDC", "34WDD", "34WEB", "34WEC", "34WED", "34WEE", "34WFB", "34WFC", "34WFD", "34WFE", "35WMS", "35WMT", "35WMU", "35WMV", "35WNS", "35WNT", "35WNU", "35WNV", "35WPS", "35WPT", "35WPU"]
 
 # Bounding box (prefered, compared to tiles)
 BBOX = [
-    8.8543,   # min longitude
-    59.3512,  # min latitude
-    9.4976,   # max longitude
-    59.7796   # max latitude
+    3.359070,   # min longitude
+    58.098203,  # min latitude
+    10.390320,   # max longitude
+    59.942632   # max latitude
 ]
 
 # Filtering method
