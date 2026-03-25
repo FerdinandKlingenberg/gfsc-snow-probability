@@ -47,7 +47,7 @@ NEW_DATA_PATH = "gfsc_data/GFSC-s3"       # Path to S3 data (new format, reproce
 # Processing parameters
 YEARS_TO_PROCESS = [2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025]  # All years
 MONTHS_TO_PROCESS = [4, 5, 6]  # April, May, June
-TILES_TO_PROCESS = ['T32VML', 'T32VMM', 'T32VNL', 'T32VNM']  # All tiles
+TILES_TO_PROCESS = ["32VKK", "32VKL", "32VKM", "32VKN", "32VKP", "32VKQ", "32VLJ", "32VLK", "32VLL", "32VLM", "32VLN", "32VLP", "32VLQ", "32VLR", "32VMJ", "32VMK", "32VML", "32VMM", "32VMN", "32VMP", "32VMQ", "32VMR", "32VNK", "32VNL", "32VNM", "32VNN", "32VNP", "32VNQ", "32VNR", "32VPL", "32VPM", "32VPN", "32VPP", "32VPQ", "32VPR", "32WMS", "32WNA", "32WNS", "32WNT", "32WNU", "32WNV", "32WPA", "32WPB", "32WPS", "32WPT", "32WPU", "32WPV", "33WVM", "33WVN", "33WVP", "33WVQ", "33WVR", "33WVS", "33WVT", "33WWP", "33WWQ", "33WWR", "33WWS", "33WWT", "33WWU", "33WXR", "33WXS", "33WXT", "33WXU", "34WDA", "34WDB", "34WDC", "34WDD", "34WEB", "34WEC", "34WED", "34WEE", "34WFB", "34WFC", "34WFD", "34WFE", "35WMS", "35WMT", "35WMU", "35WMV", "35WNS", "35WNT", "35WNU", "35WNV", "35WPS", "35WPT", "35WPU"]
 
 # Output directory
 OUTPUT_DIR = "gfsc_results"
@@ -80,13 +80,16 @@ class UnifiedGFSCProcessor:
             print(f"    Old data path does not exist: {self.old_data_path}")
             return found_files
             
+        # Normalize tile_id (support both "32VKL" and "T32VKL")
+        tile_id_pattern = tile_id if tile_id.upper().startswith('T') else f"T{tile_id}"
+        
         # Pattern for old format directory names
-        pattern = f"GFSC_{year:04d}{month:02d}\\d{{2}}-\\d{{3}}_S1-S2_{tile_id}_V101_\\d+"
+        pattern = f"GFSC_{year:04d}{month:02d}\\d{{2}}-\\d{{3}}_S1-S2_{tile_id_pattern}_V101_\\d+"
         
         for item in self.old_data_path.iterdir():
             if item.is_dir() and re.match(pattern, item.name):
                 # Extract date from directory name
-                date_match = re.search(f'GFSC_({year:04d}{month:02d}\\d{{2}})-\\d+_S1-S2_{tile_id}', item.name)
+                date_match = re.search(f'GFSC_({year:04d}{month:02d}\\d{{2}})-\\d+_S1-S2_{tile_id_pattern}', item.name)
                 if date_match:
                     date_str = date_match.group(1)
                     try:
@@ -126,11 +129,13 @@ class UnifiedGFSCProcessor:
             print(f"    Data path does not exist: {path}")
             return found_files
 
-        pattern = f"CLMS_WSI_GFSC_060m_{tile_id}_{year:04d}{month:02d}\\d{{2}}P7D_COMB_V102"
+        # Normalize tile_id (support both "32VKL" and "T32VKL")
+        tile_id_pattern = tile_id if tile_id.upper().startswith('T') else f"T{tile_id}"
+        pattern = f"CLMS_WSI_GFSC_060m_{tile_id_pattern}_{year:04d}{month:02d}\\d{{2}}P7D_COMB_V102"
 
         for item in path.iterdir():
             if item.is_dir() and re.match(pattern, item.name):
-                date_match = re.search(f'CLMS_WSI_GFSC_060m_{tile_id}_({year:04d}{month:02d}\\d{{2}})P7D_COMB_V102', item.name)
+                date_match = re.search(f'CLMS_WSI_GFSC_060m_{tile_id_pattern}_({year:04d}{month:02d}\\d{{2}})P7D_COMB_V102', item.name)
                 if date_match:
                     date_str = date_match.group(1)
                     try:
